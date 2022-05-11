@@ -2,6 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Mutation {
+  registration(registerdata: RegistrationDto!): UserEntity!
+}
+
 type Query {
   test: String!
+}
+
+input RegistrationDto {
+  confirmationPassword: String!
+  email: String!
+  firstname: String!
+  password: String!
+}
+
+type UserEntity {
+  email: String!
+  firstname: String!
+  id: ID!
+  password: String!
+  refresh_token: String!
 }

@@ -25,7 +25,7 @@ export class AuthService {
     }
 
     let user = this.user.create(registerdata);
-    // await this.user.insert(user);
+    await this.user.insert(user);
     return user;
   }
 }

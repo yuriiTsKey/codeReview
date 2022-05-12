@@ -6,10 +6,21 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './Auth/Entities/user.entity';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: './.env',
+      validationSchema: Joi.object({
+        PORT: Joi.number().required(),
+        TYPEORM_HOST: Joi.string().required(),
+        TYPEORM_USERNAME: Joi.string().required(),
+        TYPEORM_PASSWORD: Joi.string().required(),
+        TYPEORM_DATABASE: Joi.string().required(),
+      }),
+    }),
     AuthModule,
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -19,12 +30,12 @@ import { UserEntity } from './Auth/Entities/user.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.TYPEORM_HOST,
       port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'auth',
-      entities: [UserEntity],
+      username: process.env.TYPEORM_USERNAME,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DATABASE,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       migrationsRun: true,
       logging: true,

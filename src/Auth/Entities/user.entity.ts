@@ -19,7 +19,7 @@ export class UserEntity {
   email: string;
 
   @Field(() => String)
-  @Column({ nullable: false })
+  @Column({ nullable: false, select: false })
   password: string;
 
   @Field(() => String)

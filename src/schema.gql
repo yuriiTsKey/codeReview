@@ -2,11 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input LoginDto {
+  email: String!
+  password: String!
+}
+
 type Mutation {
+  login(login: LoginDto!): UserEntity!
   registration(registerdata: RegistrationDto!): UserEntity!
 }
 
 type Query {
+  hashPass: String!
   test: String!
 }
 

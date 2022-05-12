@@ -6,7 +6,6 @@ import { RegistrationDto } from './Dto/registration.dto';
 import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
 import { GqlAuthGuard } from './Guards/auth.guard';
-import { TokenInputData } from './Interfaces/token.input.interface';
 
 @Resolver()
 export class AuthResolver {

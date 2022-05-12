@@ -1,5 +1,6 @@
 import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { number } from 'joi';
 import { AuthService } from './auth.service';
 import { LoginDto } from './Dto/login.dto';
 import { RegistrationDto } from './Dto/registration.dto';
@@ -27,5 +28,10 @@ export class AuthResolver {
   @Mutation(() => TokenResponse)
   async login(@Args('loginDto') loginDto: LoginDto): Promise<TokenResponse> {
     return this.authService.login(loginDto);
+  }
+
+  @Query(() => Number)
+  async cou(): Promise<number> {
+    return this.authService.checkExpireToken();
   }
 }

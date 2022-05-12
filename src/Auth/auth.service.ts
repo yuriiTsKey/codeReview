@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
+import { async, throwIfEmpty } from 'rxjs';
 import { Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
 import { RegistrationDto } from './Dto/registration.dto';
@@ -10,7 +11,9 @@ import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { UserEntity } from './Entities/user.entity';
+import { userFromJwt } from './Interfaces/jwt.user.interface';
 import { TokenUserData } from './Interfaces/token.input.interface';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -77,8 +80,12 @@ export class AuthService {
   }
 
   async addRefreshToken(userId: number, tokenRefresh: string) {
+    const imputJwtUser = <userFromJwt>(
+      jwt.verify(tokenRefresh, process.env.REFRESH_KEY)
+    );
     await this.refreshTokenEntity.insert({
       token: tokenRefresh,
+      expired: imputJwtUser.exp,
       user: { id: userId },
     });
   }

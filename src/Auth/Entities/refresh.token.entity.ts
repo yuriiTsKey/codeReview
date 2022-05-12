@@ -16,6 +16,9 @@ export class RefreshTokenEntity {
   @Column()
   token: string;
 
+  @Column({ nullable: true })
+  expired: number;
+
   @ManyToOne(() => UserEntity, (user) => user.tokens)
   @JoinColumn({ name: 'token_id_user' })
   user: UserEntity;

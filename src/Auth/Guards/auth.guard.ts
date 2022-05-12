@@ -6,6 +6,7 @@ import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../Entities/user.entity';
 import { Repository } from 'typeorm';
+import { isJwtExpired } from 'jwt-check-expiration';
 
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
@@ -19,6 +20,9 @@ export class GqlAuthGuard implements CanActivate {
       .getContext()
       .req.headers.authorization.toString();
 
+    if (isJwtExpired(validAcessToken) == true) {
+      throw new Error('This token has expired');
+    }
     if (!validAcessToken) {
       throw new Error('No acess token');
     }
@@ -27,14 +31,11 @@ export class GqlAuthGuard implements CanActivate {
       jwt.verify(validAcessToken, process.env.ACCESS_KEY)
     );
 
-    if (Date.now() >= imputJwtUser.iat * 1000) {
-      return false;
-    }
-
     const currentUser = await this.user.findOne({
       email: imputJwtUser.email,
     });
     if (imputJwtUser.email != currentUser.email) {
+      console.log('jwt user not the same');
       return false;
     }
     return true;

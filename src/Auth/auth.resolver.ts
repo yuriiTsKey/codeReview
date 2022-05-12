@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { RegistrationDto } from './Dto/registration.dto';
 import { UserEntity } from './Entities/user.entity';
 import { LoginDto } from './Dto/login.dto';
+import { RegistrationResDto } from './Dto/user.res.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -14,20 +15,17 @@ export class AuthResolver {
     return 'yes';
   }
 
-  @Mutation(() => UserEntity)
+  @Mutation(() => RegistrationResDto)
   async registration(
     @Args('registerdata') registerdata: RegistrationDto,
-  ): Promise<UserEntity> {
+  ): Promise<RegistrationResDto> {
     return this.authService.registration(registerdata);
   }
 
-  @Mutation(() => UserEntity)
-  async login(@Args('login') login: LoginDto): Promise<UserEntity> {
-    return this.authService.login(login);
-  }
-
-  @Query(() => String)
-  hashPass(): Promise<string> {
-    return this.authService.hashPassword('12345');
+  @Mutation(() => RegistrationResDto)
+  async login(
+    @Args('loginDto') loginDto: LoginDto,
+  ): Promise<RegistrationResDto> {
+    return this.authService.login(loginDto);
   }
 }

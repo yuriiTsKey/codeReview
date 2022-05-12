@@ -9,7 +9,9 @@ import { Repository } from 'typeorm';
 import { RegistrationDto } from './Dto/registration.dto';
 import { UserEntity } from './Entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { compare } from 'bcrypt';
 import { LoginDto } from './Dto/login.dto';
+import { RegistrationResDto } from './Dto/user.res.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +19,9 @@ export class AuthService {
     @InjectRepository(UserEntity) private user: Repository<UserEntity>,
   ) {}
 
-  async registration(registerdata: RegistrationDto): Promise<UserEntity> {
+  async registration(
+    registerdata: RegistrationDto,
+  ): Promise<RegistrationResDto> {
     if (!registerdata) {
       throw new HttpException(
         'inputed data cannot be empty',
@@ -25,21 +29,37 @@ export class AuthService {
       );
     }
 
+    registerdata.password = this.hashPassword(registerdata.password);
+
     let user = this.user.create(registerdata);
     await this.user.insert(user);
+    delete user.password;
     return user;
   }
 
-  async login(login: LoginDto): Promise<UserEntity> {
-    let user = this.user.findOne({ email: login.email });
-    if (!user) {
+  async login(loginDto: LoginDto): Promise<RegistrationResDto> {
+    let currentUser = await this.user.findOne(
+      { email: loginDto.email },
+      { select: ['email', 'firstname', 'id', 'password'] },
+    );
+    if (!currentUser) {
       throw new HttpException(
         'This user not registered yet',
         HttpStatus.NOT_FOUND,
       );
     }
 
-    return user;
+    const isPasswordCorrect = compare(loginDto.password, currentUser.password);
+    if (!isPasswordCorrect) {
+      throw new HttpException(
+        'Password is not compared',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    delete currentUser.password;
+
+    return currentUser;
   }
 
   public hashPassword(password: string) {

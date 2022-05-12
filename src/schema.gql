@@ -8,12 +8,11 @@ input LoginDto {
 }
 
 type Mutation {
-  login(login: LoginDto!): UserEntity!
-  registration(registerdata: RegistrationDto!): UserEntity!
+  login(loginDto: LoginDto!): RegistrationResDto!
+  registration(registerdata: RegistrationDto!): RegistrationResDto!
 }
 
 type Query {
-  hashPass: String!
   test: String!
 }
 
@@ -24,10 +23,8 @@ input RegistrationDto {
   password: String!
 }
 
-type UserEntity {
+type RegistrationResDto {
   email: String!
   firstname: String!
-  id: ID!
-  password: String!
-  refresh_token: String!
+  id: Float!
 }

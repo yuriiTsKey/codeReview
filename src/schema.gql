@@ -9,12 +9,18 @@ input LoginDto {
 }
 
 type Mutation {
+  changeRefresh(RefreshInputDto: RefreshInputDto!): TokenResponse!
   login(loginDto: LoginDto!): TokenResponse!
   registration(registerdata: RegistrationDto!): TokenResponse!
 }
 
 type Query {
   test: String!
+}
+
+input RefreshInputDto {
+  email: String!
+  refresh_token: String!
 }
 
 """registration input data"""

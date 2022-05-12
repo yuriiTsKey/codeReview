@@ -14,7 +14,7 @@ export class RefreshTokenEntity {
   refreshid: number;
 
   @Column()
-  token: string;
+  refreshtoken: string;
 
   @Column({ nullable: true })
   expired: number;

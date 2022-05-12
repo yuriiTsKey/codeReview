@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
-import { Repository } from 'typeorm';
+import { getManager, Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
 import { RefreshInputDto } from './Dto/refresh.token.dto';
 import { RegistrationDto } from './Dto/registration.dto';
@@ -75,11 +75,23 @@ export class AuthService {
     return tokens;
   }
 
-  async chageRefreshToken(
-    refreshInputDto: RefreshInputDto,
-  ): Promise<TokenResponse> {
+  async chageRefreshToken(refreshInputDto: RefreshInputDto): Promise<any> {
+    console.log('123');
     const curUser = await this.user.findOne({ email: refreshInputDto.email });
     if (!curUser) throw new Error('User not registered');
+
+    const refreshToken = await this.getRefreshToken(
+      curUser.id,
+      refreshInputDto.refresh_token,
+    );
+
+    if (refreshInputDto.refresh_token != refreshToken) {
+      throw new Error('refresh token not compared');
+    }
+
+    const newTokens = await this.getTokens(curUser);
+
+    await this.updateRefreshToken();
   }
 
   public hashPassword(password: string) {
@@ -91,7 +103,7 @@ export class AuthService {
       jwt.verify(tokenRefresh, process.env.REFRESH_KEY)
     );
     await this.refreshTokenEntity.insert({
-      token: tokenRefresh,
+      refreshtoken: tokenRefresh,
       expired: imputJwtUser.exp,
       user: { id: userId },
     });
@@ -106,6 +118,19 @@ export class AuthService {
       .where(`expired <= :currentDate`, { currentDate: currentTime })
       .execute();
     return 1;
+  }
+
+  async getRefreshToken(idUser: number, tokenRefresh: string): Promise<string> {
+    const refresh = await getManager()
+      .getRepository(RefreshTokenEntity)
+      .createQueryBuilder('token')
+      .select('token.refreshtoken')
+      .where('token.token_id_user = :id AND token.refreshtoken = :refreshTok', {
+        id: idUser,
+        refreshTok: tokenRefresh,
+      })
+      .getOne();
+    return refresh.refreshtoken;
   }
 
   public async getTokens(userData: TokenUserData): Promise<TokenResponse> {

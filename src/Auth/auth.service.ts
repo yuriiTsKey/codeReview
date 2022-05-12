@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
-import { getManager, Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
+import { getConnection, getManager, Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
 import { RefreshInputDto } from './Dto/refresh.token.dto';
 import { RegistrationDto } from './Dto/registration.dto';
@@ -10,10 +12,7 @@ import { TokenResponse } from './Dto/tokens.dto';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { UserEntity } from './Entities/user.entity';
 import { userFromJwt } from './Interfaces/jwt.user.interface';
-import { TokenUserData } from './Interfaces/token.input.interface';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { emit } from 'process';
+import { TokenUserData } from './Interfaces/token.data.interface';
 
 @Injectable()
 export class AuthService {
@@ -91,7 +90,13 @@ export class AuthService {
 
     const newTokens = await this.getTokens(curUser);
 
-    await this.updateRefreshToken();
+    await this.updateRefreshToken(
+      curUser.id,
+      refreshInputDto.refresh_token,
+      newTokens.refresh_Token,
+    );
+
+    return newTokens;
   }
 
   public hashPassword(password: string) {
@@ -131,6 +136,22 @@ export class AuthService {
       })
       .getOne();
     return refresh.refreshtoken;
+  }
+
+  async updateRefreshToken(
+    idUser: number,
+    oldToken: string,
+    newToken: string,
+  ): Promise<any> {
+    return await getConnection()
+      .createQueryBuilder()
+      .update(RefreshTokenEntity)
+      .set({ refreshtoken: newToken })
+      .where('token_id_user = :id AND token.refreshtoken = :oldToken', {
+        id: idUser,
+        oldToken: oldToken,
+      })
+      .execute();
   }
 
   public async getTokens(userData: TokenUserData): Promise<TokenResponse> {

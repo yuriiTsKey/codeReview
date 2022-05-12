@@ -21,10 +21,10 @@ export class GqlAuthGuard implements CanActivate {
       .req.headers.authorization.toString();
 
     if (isJwtExpired(validAcessToken) == true) {
-      throw new Error('This token has expired');
+      throw new Error('Access token has expired');
     }
     if (!validAcessToken) {
-      throw new Error('No acess token');
+      throw new Error('Access token is empty');
     }
 
     const imputJwtUser = <userFromJwt>(
@@ -35,7 +35,7 @@ export class GqlAuthGuard implements CanActivate {
       email: imputJwtUser.email,
     });
     if (imputJwtUser.email != currentUser.email) {
-      console.log('jwt user not the same');
+      console.log('jwt user not the same as in token');
       return false;
     }
     return true;

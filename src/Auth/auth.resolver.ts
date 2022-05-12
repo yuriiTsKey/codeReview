@@ -24,10 +24,8 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => RegistrationResDto)
-  async login(
-    @Args('loginDto') loginDto: LoginDto,
-  ): Promise<RegistrationResDto> {
+  @Mutation(() => TokenResponse)
+  async login(@Args('loginDto') loginDto: LoginDto): Promise<TokenResponse> {
     return this.authService.login(loginDto);
   }
 }

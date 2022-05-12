@@ -9,7 +9,7 @@ input LoginDto {
 }
 
 type Mutation {
-  login(loginDto: LoginDto!): RegistrationResDto!
+  login(loginDto: LoginDto!): TokenResponse!
   registration(registerdata: RegistrationDto!): TokenResponse!
 }
 
@@ -23,12 +23,6 @@ input RegistrationDto {
   email: String!
   firstname: String!
   password: String!
-}
-
-type RegistrationResDto {
-  email: String!
-  firstname: String!
-  id: Float!
 }
 
 """Access and refresh tokens"""

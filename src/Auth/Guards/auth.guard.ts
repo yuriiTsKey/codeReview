@@ -27,7 +27,13 @@ export class GqlAuthGuard implements CanActivate {
       jwt.verify(validAcessToken, process.env.ACCESS_KEY)
     );
 
-    const currentUser = await this.user.findOne({ email: imputJwtUser.email });
+    if (Date.now() >= imputJwtUser.iat * 1000) {
+      return false;
+    }
+
+    const currentUser = await this.user.findOne({
+      email: imputJwtUser.email,
+    });
     if (imputJwtUser.email != currentUser.email) {
       return false;
     }

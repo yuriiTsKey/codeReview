@@ -10,7 +10,7 @@ import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { UserEntity } from './Entities/user.entity';
-import { TokenInputData } from './Interfaces/token.input.interface';
+import { TokenUserData } from './Interfaces/token.input.interface';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +29,12 @@ export class AuthService {
       );
     }
 
+    if (await this.user.findOne({ email: registerdata.email })) {
+      throw new HttpException(
+        'Email has already registered',
+        HttpStatus.ACCEPTED,
+      );
+    }
     registerdata.password = this.hashPassword(registerdata.password);
 
     let user = this.user.create(registerdata);
@@ -36,10 +42,11 @@ export class AuthService {
     delete user.password;
 
     const tokens = this.getTokens(user);
+    await this.addRefreshToken(user.id, (await tokens).refresh_Token);
     return tokens;
   }
 
-  async login(loginDto: LoginDto): Promise<RegistrationResDto> {
+  async login(loginDto: LoginDto): Promise<TokenResponse> {
     let currentUser = await this.user.findOne(
       { email: loginDto.email },
       { select: ['email', 'firstname', 'id', 'password'] },
@@ -51,29 +58,36 @@ export class AuthService {
       );
     }
 
-    const isPasswordCorrect = compare(loginDto.password, currentUser.password);
-    if (!isPasswordCorrect) {
+    if (!compare(loginDto.password, currentUser.password)) {
       throw new HttpException(
         'Password is not compared',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    delete currentUser.password;
 
-    return currentUser;
+    delete currentUser.password;
+    const tokens = this.getTokens(currentUser);
+    await this.addRefreshToken(currentUser.id, (await tokens).refresh_Token);
+
+    return tokens;
   }
 
   public hashPassword(password: string) {
     return bcrypt.hashSync(password, 10);
   }
 
-  // async addRefreshToken(user: ): Promise<RefreshTokenEntity> {
-  //   this.refreshTokenEntity.insert({
-  //     token:
-  //   })
-  // }
+  async addRefreshToken(userId: number, tokenRefresh: string) {
+    await this.refreshTokenEntity.insert({
+      token: tokenRefresh,
+      user: { id: userId },
+    });
+  }
 
-  public async getTokens(userData: TokenInputData): Promise<TokenResponse> {
+  async checkExpireToken() {
+    return await this.refreshTokenEntity.count();
+  }
+
+  public async getTokens(userData: TokenUserData): Promise<TokenResponse> {
     const [accessTok, refreshTok] = await Promise.all([
       this.jwtService.sign(
         {

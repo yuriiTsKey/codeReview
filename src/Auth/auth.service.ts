@@ -56,7 +56,6 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
     delete currentUser.password;
 
     return currentUser;

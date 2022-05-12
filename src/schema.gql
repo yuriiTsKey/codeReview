@@ -14,7 +14,6 @@ type Mutation {
 }
 
 type Query {
-  cou: Float!
   test: String!
 }
 

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity()
+@Entity('token')
 export class RefreshTokenEntity {
   @Column()
   @PrimaryGeneratedColumn()

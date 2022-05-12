@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
-import { async, throwIfEmpty } from 'rxjs';
 import { Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
+import { RefreshInputDto } from './Dto/refresh.token.dto';
 import { RegistrationDto } from './Dto/registration.dto';
 import { TokenResponse } from './Dto/tokens.dto';
-import { RegistrationResDto } from './Dto/user.res.dto';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { UserEntity } from './Entities/user.entity';
 import { userFromJwt } from './Interfaces/jwt.user.interface';
 import { TokenUserData } from './Interfaces/token.input.interface';
+import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { emit } from 'process';
 
 @Injectable()
 export class AuthService {
@@ -75,6 +75,13 @@ export class AuthService {
     return tokens;
   }
 
+  async chageRefreshToken(
+    refreshInputDto: RefreshInputDto,
+  ): Promise<TokenResponse> {
+    const curUser = await this.user.findOne({ email: refreshInputDto.email });
+    if (!curUser) throw new Error('User not registered');
+  }
+
   public hashPassword(password: string) {
     return bcrypt.hashSync(password, 10);
   }
@@ -90,7 +97,7 @@ export class AuthService {
     });
   }
 
-  async checkExpireToken() {
+  async deleteExpireToken() {
     const currentTime = Math.floor(Date.now() / 1000);
     await this.refreshTokenEntity
       .createQueryBuilder('token')

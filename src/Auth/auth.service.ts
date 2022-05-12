@@ -91,7 +91,14 @@ export class AuthService {
   }
 
   async checkExpireToken() {
-    return await this.refreshTokenEntity.count();
+    const currentTime = Math.floor(Date.now() / 1000);
+    await this.refreshTokenEntity
+      .createQueryBuilder('token')
+      .delete()
+      .from(RefreshTokenEntity)
+      .where(`expired <= :currentDate`, { currentDate: currentTime })
+      .execute();
+    return 1;
   }
 
   public async getTokens(userData: TokenUserData): Promise<TokenResponse> {

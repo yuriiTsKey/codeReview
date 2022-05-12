@@ -3,8 +3,8 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { RefreshTokenEntity } from './refresh.token.entity';
 
-@ObjectType()
-@Entity()
+@ObjectType({ description: 'User entity' })
+@Entity('user')
 export class UserEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn('increment', { name: 'userid' })

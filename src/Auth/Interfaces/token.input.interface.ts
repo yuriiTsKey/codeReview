@@ -1,4 +1,4 @@
-export interface TokenInputData {
+export class TokenInputData {
   id: number;
   firstname: string;
   email: string;

@@ -17,10 +17,10 @@ export class AuthResolver {
     return 'yes';
   }
 
-  @Mutation(() => RegistrationResDto)
+  @Mutation(() => TokenResponse)
   async registration(
     @Args('registerdata') registerdata: RegistrationDto,
-  ): Promise<RegistrationResDto> {
+  ): Promise<TokenResponse> {
     return this.authService.registration(registerdata);
   }
 
@@ -30,10 +30,5 @@ export class AuthResolver {
     @Args('loginDto') loginDto: LoginDto,
   ): Promise<RegistrationResDto> {
     return this.authService.login(loginDto);
-  }
-
-  @Mutation(() => TokenResponse)
-  async getToken(@Args('loginDto') loginDto: TokenInputData) {
-    return this.authService.getTokens(loginDto);
   }
 }

@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmail } from 'class-validator';
+import { RefreshTokenEntity } from './refresh.token.entity';
 
 @ObjectType()
 @Entity()
@@ -22,7 +23,6 @@ export class UserEntity {
   @Column({ nullable: false, select: false })
   password: string;
 
-  @Field(() => String)
-  @Column({ nullable: true, name: 'refreshtoken' })
-  refresh_token: string;
+  @OneToMany(() => RefreshTokenEntity, (user) => user.refreshid)
+  tokens: RefreshTokenEntity[];
 }

@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsEmail } from 'class-validator';
 
-@InputType()
+@InputType({ description: 'registration input data' })
 export class RegistrationDto {
   @Field()
   firstname: string;

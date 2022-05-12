@@ -8,6 +8,7 @@ import { LoginDto } from './Dto/login.dto';
 import { RegistrationDto } from './Dto/registration.dto';
 import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
+import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { UserEntity } from './Entities/user.entity';
 import { TokenInputData } from './Interfaces/token.input.interface';
 
@@ -15,12 +16,12 @@ import { TokenInputData } from './Interfaces/token.input.interface';
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity) private user: Repository<UserEntity>,
+    @InjectRepository(RefreshTokenEntity)
+    private refreshTokenEntity: Repository<RefreshTokenEntity>,
     private jwtService: JwtService,
   ) {}
 
-  async registration(
-    registerdata: RegistrationDto,
-  ): Promise<RegistrationResDto> {
+  async registration(registerdata: RegistrationDto): Promise<TokenResponse> {
     if (!registerdata) {
       throw new HttpException(
         'inputed data cannot be empty',
@@ -33,7 +34,9 @@ export class AuthService {
     let user = this.user.create(registerdata);
     await this.user.insert(user);
     delete user.password;
-    return user;
+
+    const tokens = this.getTokens(user);
+    return tokens;
   }
 
   async login(loginDto: LoginDto): Promise<RegistrationResDto> {
@@ -64,6 +67,12 @@ export class AuthService {
     return bcrypt.hashSync(password, 10);
   }
 
+  // async addRefreshToken(user: ): Promise<RefreshTokenEntity> {
+  //   this.refreshTokenEntity.insert({
+  //     token:
+  //   })
+  // }
+
   public async getTokens(userData: TokenInputData): Promise<TokenResponse> {
     const [accessTok, refreshTok] = await Promise.all([
       this.jwtService.sign(
@@ -74,7 +83,7 @@ export class AuthService {
         },
         {
           secret: process.env.ACCESS_KEY,
-          expiresIn: '1h',
+          expiresIn: process.env.ACCESS_EXPIRE,
         },
       ),
       this.jwtService.sign(
@@ -85,7 +94,7 @@ export class AuthService {
         },
         {
           secret: process.env.REFRESH_KEY,
-          expiresIn: '15d',
+          expiresIn: process.env.REFRESH_EXPIRE,
         },
       ),
     ]);

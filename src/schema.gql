@@ -2,6 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""login input dto"""
 input LoginDto {
   email: String!
   password: String!
@@ -9,13 +10,14 @@ input LoginDto {
 
 type Mutation {
   login(loginDto: LoginDto!): RegistrationResDto!
-  registration(registerdata: RegistrationDto!): RegistrationResDto!
+  registration(registerdata: RegistrationDto!): TokenResponse!
 }
 
 type Query {
   test: String!
 }
 
+"""registration input data"""
 input RegistrationDto {
   confirmationPassword: String!
   email: String!
@@ -27,4 +29,10 @@ type RegistrationResDto {
   email: String!
   firstname: String!
   id: Float!
+}
+
+"""Access and refresh tokens"""
+type TokenResponse {
+  access_Token: String!
+  refresh_Token: String!
 }

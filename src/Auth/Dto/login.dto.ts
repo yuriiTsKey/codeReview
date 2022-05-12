@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
-@InputType()
+@InputType({ description: 'login input dto' })
 export class LoginDto {
   @Field()
   email: string;

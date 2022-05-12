@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Entity()
 export class RefreshTokenEntity {
@@ -8,4 +15,8 @@ export class RefreshTokenEntity {
 
   @Column()
   token: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.tokens)
+  @JoinColumn({ name: 'token_id_user' })
+  user: UserEntity;
 }

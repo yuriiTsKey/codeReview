@@ -12,11 +12,15 @@ import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
 import { LoginDto } from './Dto/login.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
+import { JwtService } from '@nestjs/jwt';
+import { TokenResponse } from './Dto/tokens.dto';
+import { TokenData } from './Interfaces/token.data';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity) private user: Repository<UserEntity>,
+    private jwtService: JwtService,
   ) {}
 
   async registration(
@@ -63,5 +67,34 @@ export class AuthService {
 
   public hashPassword(password: string) {
     return bcrypt.hashSync(password, 10);
+  }
+
+  public async getTokens(userData: TokenData): Promise<TokenResponse> {
+    const [accessTok, refreshTok] = await Promise.all([
+      this.jwtService.sign(
+        {
+          id: userData.id,
+          email: userData.email,
+        },
+        {
+          secret: process.env.ACCESS_KEY,
+          expiresIn: '1h',
+        },
+      ),
+      this.jwtService.sign(
+        {
+          id: userData.id,
+          email: userData.email,
+        },
+        {
+          secret: process.env.REFRESH_KEY,
+          expiresIn: '15d',
+        },
+      ),
+    ]);
+    return {
+      access_Token: accessTok,
+      refresh_Token: refreshTok,
+    };
   }
 }

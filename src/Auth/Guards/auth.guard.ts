@@ -10,8 +10,11 @@ export class GqlAuthGuard implements CanActivate {
     const ctx = GqlExecutionContext.create(context);
     const validAcessToken = ctx
       .getContext()
-      .req.headers.authorization.toString()
-      .split(' ')[1];
+      .req.headers.authorization.toString();
+
+    if (!validAcessToken) {
+      throw new Error('No acess token');
+    }
 
     console.log(validAcessToken);
 

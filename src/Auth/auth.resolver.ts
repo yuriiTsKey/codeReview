@@ -3,8 +3,10 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { LoginDto } from './Dto/login.dto';
 import { RegistrationDto } from './Dto/registration.dto';
+import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
 import { GqlAuthGuard } from './Guards/auth.guard';
+import { TokenInputData } from './Interfaces/token.input.interface';
 
 @Resolver()
 export class AuthResolver {
@@ -30,5 +32,8 @@ export class AuthResolver {
     return this.authService.login(loginDto);
   }
 
-  @Mutation()
+  @Mutation(() => TokenResponse)
+  async getToken(@Args('loginDto') loginDto: TokenInputData) {
+    return this.authService.getTokens(loginDto);
+  }
 }

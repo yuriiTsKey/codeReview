@@ -1,20 +1,15 @@
-import {
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { RegistrationDto } from './Dto/registration.dto';
-import { UserEntity } from './Entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
+import { Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
-import { RegistrationResDto } from './Dto/user.res.dto';
-import { JwtService } from '@nestjs/jwt';
+import { RegistrationDto } from './Dto/registration.dto';
 import { TokenResponse } from './Dto/tokens.dto';
-import { TokenData } from './Interfaces/token.data';
+import { RegistrationResDto } from './Dto/user.res.dto';
+import { UserEntity } from './Entities/user.entity';
+import { TokenInputData } from './Interfaces/token.input.interface';
 
 @Injectable()
 export class AuthService {
@@ -69,12 +64,13 @@ export class AuthService {
     return bcrypt.hashSync(password, 10);
   }
 
-  public async getTokens(userData: TokenData): Promise<TokenResponse> {
+  public async getTokens(userData: TokenInputData): Promise<TokenResponse> {
     const [accessTok, refreshTok] = await Promise.all([
       this.jwtService.sign(
         {
           id: userData.id,
           email: userData.email,
+          firstname: userData.firstname,
         },
         {
           secret: process.env.ACCESS_KEY,
@@ -85,6 +81,7 @@ export class AuthService {
         {
           id: userData.id,
           email: userData.email,
+          firstname: userData.firstname,
         },
         {
           secret: process.env.REFRESH_KEY,

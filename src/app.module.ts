@@ -7,6 +7,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './Auth/Entities/user.entity';
 import * as Joi from 'joi';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import * as Joi from 'joi';
       migrationsRun: true,
       logging: true,
     }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [],

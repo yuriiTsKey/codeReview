@@ -163,6 +163,10 @@ export class AuthService {
     );
   }
 
+  async getUserByMail(userMail: string): Promise<UserEntity> {
+    return await this.user.findOne({ email: userMail });
+  }
+
   public async getTokens(userData: TokenUserData): Promise<TokenResponse> {
     const [accessTok, refreshTok] = await Promise.all([
       this.jwtService.sign(

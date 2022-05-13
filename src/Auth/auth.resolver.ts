@@ -16,6 +16,7 @@ import { UserIp } from 'src/Auth/Consts/IpAddress';
 import { Get, Ip } from '@nestjs/common';
 import { MailConfirmationService } from 'src/mailconfirmation/mailconfirmation.service';
 import { TokenInputDto } from './Dto/email.token.dto';
+import { EmailDto } from './Dto/email.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -63,6 +64,16 @@ export class AuthResolver {
       tokenInput.emailToken,
     );
     return email;
+  }
+
+  @Mutation(() => String)
+  async resentConfirmationLink(
+    @Args('email') email: EmailDto,
+  ): Promise<boolean> {
+    const result = await this.emailConfirmationService.resendVerificationLink(
+      email.email,
+    );
+    return true;
   }
 
   @Cron('0 */5 * * *')

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/Auth/auth.service';
 import MailService from 'src/mail/mail.service';
 import VerificationTokenPayload from './Interface/verificationTokenPayload.interface';
 
@@ -10,6 +11,7 @@ export class MailConfirmationService {
     private readonly jwtService: JwtService,
     private readonly emailService: MailService,
     private readonly configService: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
   public sendVerificationLink(email: string) {
@@ -28,6 +30,15 @@ export class MailConfirmationService {
       subject: 'Email confirmation',
       text,
     });
+  }
+
+  async resendVerificationLink(userMail: string): Promise<boolean> {
+    const user = await this.authService.getUserByMail(userMail);
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    await this.sendVerificationLink(user.email);
+    return true;
   }
 
   async getDataFromEmailToken(token): Promise<string> {

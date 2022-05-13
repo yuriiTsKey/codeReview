@@ -5,13 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './Entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
-import MailService from 'src/mail/mail.service';
+import { MailConfirmationService } from '../mailconfirmation/mailconfirmation.service';
+import { JwtmoduleModule } from 'src/jwtmodule/jwtmodule.module';
+import { MailconfirmationModule } from 'src/mailconfirmation/mailconfirmation.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, RefreshTokenEntity]),
-    JwtModule.register({}),
-    MailService,
+    JwtmoduleModule,
+    MailModule,
+    MailconfirmationModule,
   ],
   providers: [AuthResolver, AuthService],
 })

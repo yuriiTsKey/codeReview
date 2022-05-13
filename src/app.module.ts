@@ -10,6 +10,7 @@ import * as Joi from 'joi';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailModule } from './mail/mail.module';
 import { MailconfirmationModule } from './mailconfirmation/mailconfirmation.module';
+import { JwtmoduleModule } from './jwtmodule/jwtmodule.module';
 
 @Module({
   imports: [
@@ -30,7 +31,6 @@ import { MailconfirmationModule } from './mailconfirmation/mailconfirmation.modu
         EMAIL_CONFIRMATION_URL: Joi.string().required(),
       }),
     }),
-    AuthModule,
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -50,8 +50,7 @@ import { MailconfirmationModule } from './mailconfirmation/mailconfirmation.modu
       logging: true,
     }),
     ScheduleModule.forRoot(),
-    MailModule,
-    MailconfirmationModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

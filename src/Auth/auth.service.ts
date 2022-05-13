@@ -154,6 +154,15 @@ export class AuthService {
       .execute();
   }
 
+  async markEmailAsConfirmae(email: string) {
+    return this.user.update(
+      { email },
+      {
+        isEmailConfirmed: true,
+      },
+    );
+  }
+
   public async getTokens(userData: TokenUserData): Promise<TokenResponse> {
     const [accessTok, refreshTok] = await Promise.all([
       this.jwtService.sign(

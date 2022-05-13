@@ -14,10 +14,14 @@ import { GqlAuthGuard } from './Guards/auth.guard';
 import { RealIP } from 'nestjs-real-ip';
 import { UserIp } from 'src/Auth/Consts/IpAddress';
 import { Get, Ip } from '@nestjs/common';
+import { MailConfirmationService } from 'src/mailconfirmation/mailconfirmation.service';
 
 @Resolver()
 export class AuthResolver {
-  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
+  constructor(
+    @Inject(AuthService) private readonly authService: AuthService,
+    private readonly emailConfirmationService: MailConfirmationService,
+  ) {}
 
   @Query(() => String)
   async test(@UserIp() ip) {
@@ -29,7 +33,11 @@ export class AuthResolver {
   async registration(
     @Args('registerdata') registerdata: RegistrationDto,
   ): Promise<TokenResponse> {
-    return this.authService.registration(registerdata);
+    const token = await this.authService.registration(registerdata);
+    await this.emailConfirmationService.sendVerificationLink(
+      registerdata.email,
+    );
+    return token;
   }
 
   @UseGuards(GqlAuthGuard)

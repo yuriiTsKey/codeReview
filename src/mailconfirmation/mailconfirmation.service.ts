@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
 import MailService from 'src/mail/mail.service';
 import VerificationTokenPayload from './Interface/verificationTokenPayload.interface';
 
@@ -8,7 +7,6 @@ import VerificationTokenPayload from './Interface/verificationTokenPayload.inter
 export class MailConfirmationService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly confgiModule: ConfigModule,
     private readonly emailService: MailService,
   ) {}
 

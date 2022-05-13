@@ -2,10 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input EmailDto {
-  email: String!
-}
-
 """login input dto"""
 input LoginDto {
   email: String!
@@ -17,7 +13,6 @@ type Mutation {
   confirmEmailVerification(tokenInput: TokenInputDto!): String!
   login(loginDto: LoginDto!): TokenResponse!
   registration(registerdata: RegistrationDto!): TokenResponse!
-  resentConfirmationLink(email: EmailDto!): String!
 }
 
 type Query {

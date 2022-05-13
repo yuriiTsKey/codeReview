@@ -1,22 +1,15 @@
 import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Cron } from '@nestjs/schedule';
-import { Token } from 'graphql';
-import { argsToArgsConfig } from 'graphql/type/definition';
-import { number } from 'joi';
+import { UserIp } from 'src/Auth/Consts/IpAddress';
+import { MailConfirmationService } from 'src/mailconfirmation/mailconfirmation.service';
 import { AuthService } from './auth.service';
+import { TokenInputDto } from './Dto/email.token.dto';
 import { LoginDto } from './Dto/login.dto';
 import { RefreshInputDto } from './Dto/refresh.token.dto';
 import { RegistrationDto } from './Dto/registration.dto';
 import { TokenResponse } from './Dto/tokens.dto';
-import { RegistrationResDto } from './Dto/user.res.dto';
 import { GqlAuthGuard } from './Guards/auth.guard';
-import { RealIP } from 'nestjs-real-ip';
-import { UserIp } from 'src/Auth/Consts/IpAddress';
-import { Get, Ip } from '@nestjs/common';
-import { MailConfirmationService } from 'src/mailconfirmation/mailconfirmation.service';
-import { TokenInputDto } from './Dto/email.token.dto';
-import { EmailDto } from './Dto/email.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -64,16 +57,6 @@ export class AuthResolver {
       tokenInput.emailToken,
     );
     return email;
-  }
-
-  @Mutation(() => String)
-  async resentConfirmationLink(
-    @Args('email') email: EmailDto,
-  ): Promise<boolean> {
-    // const result = await this.emailConfirmationService.resendVerificationLink(
-    //   email.email,
-    // );
-    return true;
   }
 
   @Cron('0 */5 * * *')

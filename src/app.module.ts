@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './Auth/Entities/user.entity';
 import * as Joi from 'joi';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MailModule } from './mail/mail.module';
+import { MailconfirmationModule } from './mailconfirmation/mailconfirmation.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { ScheduleModule } from '@nestjs/schedule';
       logging: true,
     }),
     ScheduleModule.forRoot(),
+    MailModule,
+    MailconfirmationModule,
   ],
   controllers: [],
   providers: [],

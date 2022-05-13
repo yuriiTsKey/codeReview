@@ -20,6 +20,12 @@ import { ScheduleModule } from '@nestjs/schedule';
         TYPEORM_USERNAME: Joi.string().required(),
         TYPEORM_PASSWORD: Joi.string().required(),
         TYPEORM_DATABASE: Joi.string().required(),
+
+        EMAIL_SERVICE: Joi.string().required(),
+        EMAIL_USER: Joi.string().required(),
+        EMAIL_PASSWORD: Joi.string().required(),
+
+        EMAIL_CONFIRMATION_URL: Joi.string().required(),
       }),
     }),
     AuthModule,

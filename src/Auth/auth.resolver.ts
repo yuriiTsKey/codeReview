@@ -12,7 +12,7 @@ import { TokenResponse } from './Dto/tokens.dto';
 import { RegistrationResDto } from './Dto/user.res.dto';
 import { GqlAuthGuard } from './Guards/auth.guard';
 import { RealIP } from 'nestjs-real-ip';
-import { UserIp } from 'src/Consts/IpAddress';
+import { UserIp } from 'src/Auth/Consts/IpAddress';
 import { Get, Ip } from '@nestjs/common';
 
 @Resolver()

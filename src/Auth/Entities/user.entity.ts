@@ -23,6 +23,9 @@ export class UserEntity {
   @Column({ nullable: false, select: false })
   password: string;
 
+  @Column({ default: false })
+  isEmailConfirmed: boolean;
+
   @OneToMany(() => RefreshTokenEntity, (user) => user.refreshid)
   tokens: RefreshTokenEntity[];
 }

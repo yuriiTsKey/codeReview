@@ -6,14 +6,14 @@ import { UserEntity } from './Entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntity } from './Entities/refresh.token.entity';
 import { MailConfirmationService } from '../mailconfirmation/mailconfirmation.service';
-import { JwtmoduleModule } from 'src/jwtmodule/jwtmodule.module';
+import { JwtExportModule } from 'src/jwtmodule/jwtmodule.module';
 import { MailconfirmationModule } from 'src/mailconfirmation/mailconfirmation.module';
 import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, RefreshTokenEntity]),
-    JwtmoduleModule,
+    JwtExportModule,
     MailModule,
     MailconfirmationModule,
   ],

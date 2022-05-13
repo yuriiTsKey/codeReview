@@ -1,16 +1,12 @@
+import { ApolloDriver } from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
 import { join } from 'path';
 import { AuthModule } from './Auth/auth.module';
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './Auth/Entities/user.entity';
-import * as Joi from 'joi';
-import { ScheduleModule } from '@nestjs/schedule';
-import { MailModule } from './mail/mail.module';
-import { MailconfirmationModule } from './mailconfirmation/mailconfirmation.module';
-import { JwtmoduleModule } from './jwtmodule/jwtmodule.module';
 
 @Module({
   imports: [

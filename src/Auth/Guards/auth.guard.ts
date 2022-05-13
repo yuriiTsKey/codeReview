@@ -1,12 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Observable } from 'rxjs';
-import { userFromJwt } from '../Interfaces/jwt.user.interface';
-import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '../Entities/user.entity';
-import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
 import { isJwtExpired } from 'jwt-check-expiration';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../Entities/user.entity';
+import { userFromJwt } from '../Interfaces/jwt.user.interface';
 
 @Injectable()
 export class GqlAuthGuard implements CanActivate {

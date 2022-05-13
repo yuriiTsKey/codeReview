@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from 'src/Auth/auth.service';
 import MailService from 'src/mail/mail.service';
 import VerificationTokenPayload from './Interface/verificationTokenPayload.interface';
 

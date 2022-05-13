@@ -17,6 +17,6 @@ import { MailModule } from 'src/mail/mail.module';
     MailModule,
     MailconfirmationModule,
   ],
-  providers: [AuthResolver, AuthService],
+  providers: [AuthResolver, AuthService, MailConfirmationService],
 })
 export class AuthModule {}

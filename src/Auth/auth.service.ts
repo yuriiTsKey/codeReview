@@ -154,7 +154,7 @@ export class AuthService {
       .execute();
   }
 
-  async markEmailAsConfirmae(email: string) {
+  async markEmailAsConfirm(email: string) {
     return this.user.update(
       { email },
       {

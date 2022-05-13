@@ -70,9 +70,9 @@ export class AuthResolver {
   async resentConfirmationLink(
     @Args('email') email: EmailDto,
   ): Promise<boolean> {
-    const result = await this.emailConfirmationService.resendVerificationLink(
-      email.email,
-    );
+    // const result = await this.emailConfirmationService.resendVerificationLink(
+    //   email.email,
+    // );
     return true;
   }
 

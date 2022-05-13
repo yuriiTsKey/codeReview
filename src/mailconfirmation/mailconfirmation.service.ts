@@ -11,7 +11,6 @@ export class MailConfirmationService {
     private readonly jwtService: JwtService,
     private readonly emailService: MailService,
     private readonly configService: ConfigService,
-    private readonly authService: AuthService,
   ) {}
 
   public sendVerificationLink(email: string) {
@@ -32,14 +31,14 @@ export class MailConfirmationService {
     });
   }
 
-  async resendVerificationLink(userMail: string): Promise<boolean> {
-    const user = await this.authService.getUserByMail(userMail);
-    if (user.isEmailConfirmed) {
-      throw new BadRequestException('Email already confirmed');
-    }
-    await this.sendVerificationLink(user.email);
-    return true;
-  }
+  // async resendVerificationLink(userMail: string): Promise<boolean> {
+  //   const user = await this.authService.getUserByMail(userMail);
+  //   if (user.isEmailConfirmed) {
+  //     throw new BadRequestException('Email already confirmed');
+  //   }
+  //   await this.sendVerificationLink(user.email);
+  //   return true;
+  // }
 
   async getDataFromEmailToken(token): Promise<string> {
     try {

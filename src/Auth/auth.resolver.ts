@@ -15,6 +15,7 @@ import { RealIP } from 'nestjs-real-ip';
 import { UserIp } from 'src/Auth/Consts/IpAddress';
 import { Get, Ip } from '@nestjs/common';
 import { MailConfirmationService } from 'src/mailconfirmation/mailconfirmation.service';
+import { TokenInputDto } from './Dto/email.token.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -52,6 +53,16 @@ export class AuthResolver {
     @Args('RefreshInputDto') refreshInputDto: RefreshInputDto,
   ): Promise<TokenResponse> {
     return this.authService.chageRefreshToken(refreshInputDto);
+  }
+
+  @Mutation(() => String)
+  async confirmEmailVerification(
+    @Args('tokenInput') tokenInput: TokenInputDto,
+  ): Promise<string> {
+    const email = await this.emailConfirmationService.getDataFromEmailToken(
+      tokenInput.emailToken,
+    );
+    return email;
   }
 
   @Cron('0 */5 * * *')

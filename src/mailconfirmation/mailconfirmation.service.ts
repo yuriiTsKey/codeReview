@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import MailService from 'src/mail/mail.service';
 import VerificationTokenPayload from './Interface/verificationTokenPayload.interface';
@@ -8,6 +9,7 @@ export class MailConfirmationService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly emailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
 
   public sendVerificationLink(email: string) {
@@ -26,5 +28,19 @@ export class MailConfirmationService {
       subject: 'Email confirmation',
       text,
     });
+  }
+
+  async getDataFromEmailToken(token): Promise<string> {
+    try {
+      const payload = await this.jwtService.verify(token, {
+        secret: this.configService.get('JWT_EMAIL_VERIFICATION_TOKEN_SECRET'),
+      });
+
+      if (typeof payload === 'object' && 'email' in payload) {
+        return payload.email;
+      }
+    } catch (error) {
+      throw Error('Cannot read payload from email token');
+    }
   }
 }

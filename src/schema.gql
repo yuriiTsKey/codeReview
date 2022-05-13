@@ -10,6 +10,7 @@ input LoginDto {
 
 type Mutation {
   changeRefresh(RefreshInputDto: RefreshInputDto!): TokenResponse!
+  confirmEmailVerification(tokenInput: TokenInputDto!): String!
   login(loginDto: LoginDto!): TokenResponse!
   registration(registerdata: RegistrationDto!): TokenResponse!
 }
@@ -29,6 +30,10 @@ input RegistrationDto {
   email: String!
   firstname: String!
   password: String!
+}
+
+input TokenInputDto {
+  emailToken: String!
 }
 
 """Access and refresh tokens"""

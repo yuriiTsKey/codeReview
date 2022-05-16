@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { compare } from 'bcrypt';
+import { GraphQLError } from 'graphql';
 import * as jwt from 'jsonwebtoken';
 import { getConnection, getManager, Repository } from 'typeorm';
 import { LoginDto } from './Dto/login.dto';
@@ -24,18 +25,8 @@ export class AuthService {
   ) {}
 
   async registration(registerdata: RegistrationDto): Promise<TokenResponse> {
-    if (!registerdata) {
-      throw new HttpException(
-        'inputed data cannot be empty',
-        HttpStatus.FAILED_DEPENDENCY,
-      );
-    }
-
     if (await this.user.findOne({ email: registerdata.email })) {
-      throw new HttpException(
-        'Email has already registered',
-        HttpStatus.ACCEPTED,
-      );
+      throw new GraphQLError('Email has already registered');
     }
     registerdata.password = this.hashPassword(registerdata.password);
 
@@ -54,17 +45,11 @@ export class AuthService {
       { select: ['email', 'firstname', 'id', 'password'] },
     );
     if (!currentUser) {
-      throw new HttpException(
-        'This user not registered yet',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new GraphQLError('This user not registered yet');
     }
 
     if (!compare(loginDto.password, currentUser.password)) {
-      throw new HttpException(
-        'Password is not compared',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new GraphQLError('Password is not compared');
     }
 
     delete currentUser.password;
@@ -77,7 +62,7 @@ export class AuthService {
   async chageRefreshToken(refreshInputDto: RefreshInputDto): Promise<any> {
     console.log('123');
     const curUser = await this.user.findOne({ email: refreshInputDto.email });
-    if (!curUser) throw new Error('User not registered');
+    if (!curUser) throw new GraphQLError('User not registered');
 
     const refreshToken = await this.getRefreshToken(
       curUser.id,
@@ -85,7 +70,7 @@ export class AuthService {
     );
 
     if (refreshInputDto.refresh_token != refreshToken) {
-      throw new Error('refresh token not compared');
+      throw new GraphQLError('refresh token not compared');
     }
 
     const newTokens = await this.getTokens(curUser);
